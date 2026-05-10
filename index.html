@@ -744,11 +744,19 @@
                     </div>
                 </div>
 
-                <!-- Tarjetas de Pacientes -->
+                <!-- Pacientes Pendientes -->
                 <div class="card" style="margin-top: 24px;">
-                    <h3>Pacientes en Atención</h3>
-                    <div id="pacientesAtencionDiv" style="max-height: 400px; overflow-y: auto;">
+                    <h3>Pacientes Pendientes de Atención</h3>
+                    <div id="pacientesPendientesDiv" style="max-height: 300px; overflow-y: auto;">
                         <p style="color: #718096; font-size: 14px;">Selecciona pacientes del panel superior...</p>
+                    </div>
+                </div>
+
+                <!-- Tarjetas de Pacientes Atendidos -->
+                <div class="card" style="margin-top: 24px;">
+                    <h3>Pacientes Atendidos ✅</h3>
+                    <div id="pacientesAtendidosDiv" style="max-height: 300px; overflow-y: auto;">
+                        <p style="color: #718096; font-size: 14px;">Los pacientes atendidos aparecerán aquí...</p>
                     </div>
                 </div>
 
@@ -1387,7 +1395,7 @@
 
         function actualizarPacientesAtencion() {
             const container = document.getElementById('pacientesSeleccionados');
-            const atencionDiv = document.getElementById('pacientesAtencionDiv');
+            const pendientesDiv = document.getElementById('pacientesPendientesDiv');
 
             document.getElementById('countPacientesHoy').textContent = pacientesDelDia.length;
 
@@ -1399,7 +1407,7 @@
                 </div>`
             ).join('');
 
-            atencionDiv.innerHTML = pacientesDelDia.map(p =>
+            pendientesDiv.innerHTML = pacientesDelDia.map(p =>
                 `<div class="patient-card pending" style="cursor: pointer;" onclick="abrirModalAtencion('${p.dni}')">
                     <div class="patient-card-name">${p.paciente}</div>
                     <div class="patient-card-info">DNI: ${p.dni} | Edad: ${p.edad} | ${p.dx}</div>
@@ -1408,7 +1416,7 @@
             ).join('');
 
             if (pacientesDelDia.length === 0) {
-                atencionDiv.innerHTML = '<p style="color: #718096; font-size: 14px;">Selecciona pacientes del panel superior...</p>';
+                pendientesDiv.innerHTML = '<p style="color: #718096; font-size: 14px;">Selecciona pacientes del panel superior...</p>';
             }
         }
 
@@ -1908,16 +1916,21 @@
                 </div>` : ''}
             `;
 
-            // Agregar tarjeta a la lista
-            document.getElementById('pacientesAtencionDiv').appendChild(tarjeta);
+            // Agregar tarjeta a la lista de atendidos
+            const atendidosDiv = document.getElementById('pacientesAtendidosDiv');
+            // Remover el mensaje inicial si existe
+            if (atendidosDiv.querySelector('p')) {
+                atendidosDiv.innerHTML = '';
+            }
+            atendidosDiv.appendChild(tarjeta);
         }
 
         async function finalizarAtencionDelDia() {
             const fechaAtencion = document.getElementById('fechaAtencion').value;
-            const pacientesDiv = document.getElementById('pacientesAtencionDiv');
-            const pacientesHtml = pacientesDiv.innerHTML;
+            const atendidosDiv = document.getElementById('pacientesAtendidosDiv');
+            const pacientesHtml = atendidosDiv.innerHTML;
 
-            if (!pacientesHtml.includes('dni-')) {
+            if (!pacientesHtml.includes('tarjeta-')) {
                 alert('⚠️ No hay pacientes registrados en el día de hoy');
                 return;
             }
@@ -1969,9 +1982,11 @@
         }
 
         function limpiarAtencion() {
-            document.getElementById('pacientesAtencionDiv').innerHTML = '<p style="color: #718096; font-size: 14px;">Selecciona pacientes del panel superior...</p>';
+            document.getElementById('pacientesPendientesDiv').innerHTML = '<p style="color: #718096; font-size: 14px;">Selecciona pacientes del panel superior...</p>';
+            document.getElementById('pacientesAtendidosDiv').innerHTML = '<p style="color: #718096; font-size: 14px;">Los pacientes atendidos aparecerán aquí...</p>';
             document.getElementById('pacientesSeleccionados').innerHTML = '';
             document.getElementById('countPacientesHoy').textContent = '0';
+            pacientesDelDia = [];
             alert('🔄 El día ha sido limpiado y está listo para nuevas atenciones');
         }
 
