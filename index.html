@@ -651,6 +651,14 @@
                     <button class="action-card" onclick="navegarA('alertas')">🚨 Ver Alertas</button>
                     <button class="action-card" onclick="navegarA('historial')">📊 Historial</button>
                 </div>
+
+                <!-- Botón Maestro de Administración -->
+                <div style="margin-top: 40px; padding-top: 24px; border-top: 2px solid #e2e8f0; text-align: center;">
+                    <button class="btn btn-secondary" onclick="abrirModal('modalLimpiar')" style="background: linear-gradient(135deg, #d63031 0%, #e17055 100%); color: white; padding: 12px 24px;">
+                        🔑 Botón Maestro de Administración
+                    </button>
+                    <p style="font-size: 12px; color: #718096; margin-top: 8px;">⚠️ Requiere contraseña</p>
+                </div>
             </div>
 
             <!-- ====== PÁGINA 2: REGISTRO DE PACIENTES ====== -->
@@ -1060,6 +1068,37 @@
             <div class="modal-buttons">
                 <button class="btn btn-primary" onclick="guardarEvaluacionAtencion()">💾 Guardar</button>
                 <button class="btn btn-secondary" onclick="cerrarModal('modalEvaluacionAtencion')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Botón Maestro (Limpiar Registros) -->
+    <div class="modal" id="modalLimpiar">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="close-modal" onclick="cerrarModal('modalLimpiar')">✕</button>
+            <div class="modal-header">
+                <h2>🔐 Administración del Sistema</h2>
+                <p>Eliminar todos los registros de laboratorio</p>
+            </div>
+
+            <div style="background: #fff3cd; border: 1px solid #ffc107; color: #856404; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="margin: 0; font-size: 13px; font-weight: 500;">
+                    ⚠️ Esta acción eliminará TODOS los registros de laboratorio de TODAS las fechas.<br><br>
+                    Los pacientes NO serán eliminados, solo sus datos de laboratorio.<br><br>
+                    Esta acción NO se puede deshacer.
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña Maestra</label>
+                <input type="password" id="contrasenaMaestra" placeholder="Ingresa la contraseña" style="font-size: 16px;">
+            </div>
+
+            <div id="mensajeLimpiar" style="margin-bottom: 16px;"></div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="cerrarModal('modalLimpiar')">Cancelar</button>
+                <button class="btn btn-primary" onclick="ejecutarLimpiarRegistros()" style="background: #d63031;">🗑️ Eliminar Todos los Registros</button>
             </div>
         </div>
     </div>
@@ -1988,6 +2027,49 @@
             document.getElementById('countPacientesHoy').textContent = '0';
             pacientesDelDia = [];
             alert('🔄 El día ha sido limpiado y está listo para nuevas atenciones');
+        }
+
+        async function ejecutarLimpiarRegistros() {
+            const password = document.getElementById('contrasenaMaestra').value;
+            const msgDiv = document.getElementById('mensajeLimpiar');
+
+            if (!password) {
+                msgDiv.innerHTML = '<div class="error-message">❌ Por favor ingresa la contraseña</div>';
+                return;
+            }
+
+            if (!confirm('⚠️ ADVERTENCIA: Se eliminarán TODOS los registros de laboratorio de TODAS las fechas.\n\n¿Estás seguro de continuar? Esta acción NO se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                msgDiv.innerHTML = '<div class="success-message">Procesando...</div>';
+
+                const response = await fetch(`${API_BASE}/api/admin/limpiar-registros`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    msgDiv.innerHTML = `<div class="success-message">✅ ${data.mensaje}<br>Se eliminaron ${data.registros_eliminados} registros</div>`;
+
+                    setTimeout(() => {
+                        cerrarModal('modalLimpiar');
+                        document.getElementById('contrasenaMaestra').value = '';
+                        msgDiv.innerHTML = '';
+                        cargarPanelPrincipal();
+                        alert('✅ Todos los registros de laboratorio han sido eliminados exitosamente.\n\nLos datos de los pacientes se mantienen intactos.');
+                    }, 2000);
+                } else {
+                    const error = await response.json();
+                    msgDiv.innerHTML = `<div class="error-message">❌ ${error.detail}</div>`;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                msgDiv.innerHTML = '<div class="error-message">❌ Error de conexión con el servidor</div>';
+            }
         }
 
         // ====== INICIALIZACIÓN ======

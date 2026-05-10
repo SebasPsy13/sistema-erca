@@ -331,6 +331,34 @@ def get_parametros():
     """Obtener parámetros de laboratorio con valores normales"""
     return PARAMETROS_LABORATORIO
 
+# ======================== RUTAS API - ADMINISTRACIÓN ========================
+@app.post("/api/admin/limpiar-registros")
+def limpiar_registros(data: dict):
+    """Eliminar todos los registros de laboratorio (contraseña requerida)"""
+    password = data.get("password")
+
+    # Validar contraseña
+    if password != "SaludRenal2026":
+        raise HTTPException(status_code=401, detail="Contraseña incorrecta")
+
+    try:
+        conn = DatabaseManager.get_connection()
+        cursor = conn.cursor()
+
+        # Eliminar todos los registros de seguimiento
+        cursor.execute("DELETE FROM seguimiento")
+        conn.commit()
+
+        registros_eliminados = cursor.rowcount
+        conn.close()
+
+        return {
+            "mensaje": "Registros eliminados exitosamente",
+            "registros_eliminados": registros_eliminados
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error al eliminar registros: {str(e)}")
+
 # ======================== RUTAS API - DEBUG ========================
 @app.get("/api/debug")
 def debug_info():
