@@ -211,14 +211,14 @@ def crear_evaluacion(eval_data: Evaluacion):
     cursor = conn.cursor()
 
     try:
-        # Insertar sin la columna ac/acr si no existe
+        # Insertar solo las columnas que existen en la BD
         cursor.execute('''
             INSERT INTO seguimiento
-            (dni_p, fecha, crea, urea, hb, k, na, tfg, estadio, asistio, notas)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (dni_p, fecha, crea, urea, hb, k, na, tfg, asistio, notas)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (eval_data.dni_p, eval_data.fecha, eval_data.crea, eval_data.urea,
               eval_data.hb, eval_data.k, eval_data.na,
-              eval_data.tfg, eval_data.estadio, eval_data.asistio, eval_data.notas))
+              eval_data.tfg, eval_data.asistio, eval_data.notas))
         conn.commit()
         conn.close()
         return {"mensaje": "Evaluación registrada"}
