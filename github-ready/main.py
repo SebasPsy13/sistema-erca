@@ -48,6 +48,17 @@ class Cita(BaseModel):
     tipo: str
     estado: str
 
+# ======================== PARÁMETROS DE LABORATORIO ========================
+PARAMETROS_LABORATORIO = {
+    "crea": {"nombre": "Creatinina", "unidad": "mg/dL", "min": 0.6, "max": 1.2},
+    "urea": {"nombre": "Urea", "unidad": "mg/dL", "min": 7, "max": 20},
+    "hb": {"nombre": "Hemoglobina", "unidad": "g/dL", "min": 12, "max": 17.5},
+    "k": {"nombre": "Potasio", "unidad": "mEq/L", "min": 3.5, "max": 5.0},
+    "na": {"nombre": "Sodio", "unidad": "mEq/L", "min": 136, "max": 145},
+    "acr": {"nombre": "Albúmina/Creatinina", "unidad": "mg/g", "min": 0, "max": 30},
+    "tfg": {"nombre": "TFG (CKD-EPI)", "unidad": "mL/min/1.73m2", "min": 90, "max": 999}
+}
+
 # ======================== DATABASE MANAGER ========================
 class DatabaseManager:
     """Gestiona todas las operaciones con la BD"""
@@ -315,6 +326,12 @@ def serve_root():
 def serve_html():
     """Servir el archivo HTML"""
     return FileResponse("index.html", media_type="text/html")
+
+# ======================== RUTAS API - PARÁMETROS ========================
+@app.get("/api/parametros")
+def get_parametros():
+    """Obtener parámetros de laboratorio con valores normales"""
+    return PARAMETROS_LABORATORIO
 
 # ======================== HEALTH CHECK ========================
 @app.get("/api/health")
