@@ -213,7 +213,7 @@ def crear_evaluacion(eval_data: Evaluacion):
     try:
         cursor.execute('''
             INSERT INTO seguimiento
-            (dni_p, fecha, urea, crea, hb, k, na, acr, tfg, estadio, asistio, notas)
+            (dni_p, fecha, urea, crea, hb, k, na, ac, tfg, estadio, asistio, notas)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (eval_data.dni_p, eval_data.fecha, eval_data.urea, eval_data.crea,
               eval_data.hb, eval_data.k, eval_data.na, eval_data.acr,
