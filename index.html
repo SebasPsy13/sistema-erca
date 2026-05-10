@@ -1417,6 +1417,21 @@
             actualizarPacientesAtencion();
         }
 
+        function removerPacientePendiente(dni) {
+            // Solo remover del lado izquierdo (lista pendiente) sin afectar las tarjetas
+            pacientesDelDia = pacientesDelDia.filter(p => p.dni !== dni);
+            document.getElementById('countPacientesHoy').textContent = pacientesDelDia.length;
+
+            const container = document.getElementById('pacientesSeleccionados');
+            container.innerHTML = pacientesDelDia.map(p =>
+                `<div class="patient-card" style="cursor: default; margin-bottom: 10px;">
+                    <div class="patient-card-name">${p.paciente}</div>
+                    <div class="patient-card-info">DNI: ${p.dni} | ${p.dx}</div>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 8px; padding: 8px;" onclick="removerPacienteDia('${p.dni}')">Remover</button>
+                </div>`
+            ).join('');
+        }
+
         function abrirModalAtencion(dni) {
             const paciente = pacientesDelDia.find(p => p.dni === dni);
             if (!paciente) {
@@ -1571,7 +1586,7 @@
 
                     setTimeout(() => {
                         cerrarModal('modalEvaluacionAtencion');
-                        removerPacienteDia(pacienteActualEvaluacion.dni);
+                        removerPacientePendiente(pacienteActualEvaluacion.dni); // Remover de lista pendiente pero mantener tarjeta
                         pacienteActualEvaluacion = null;
 
                         // Limpiar campos del formulario
