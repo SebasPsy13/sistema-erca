@@ -238,10 +238,7 @@ def get_alertas():
         SELECT p.dni, p.paciente, p.edad, p.dx,
                (SELECT tfg FROM seguimiento
                 WHERE dni_p = p.dni
-                ORDER BY fecha DESC LIMIT 1) as tfg_actual,
-               (SELECT estadio FROM seguimiento
-                WHERE dni_p = p.dni
-                ORDER BY fecha DESC LIMIT 1) as estadio_actual
+                ORDER BY fecha DESC LIMIT 1) as tfg_actual
         FROM pacientes p
         WHERE (SELECT tfg FROM seguimiento
                WHERE dni_p = p.dni

@@ -1106,7 +1106,7 @@
             const a = sexo === 'Femenino' ? -0.241 : -0.302;
 
             const crk = creatinina / k;
-            let tfg = 142 * Math.pow(crk, a) * Math.pow(Math.max(crk, 1), -1.200) * Math.pow(0.9938, edad);
+            let tfg = 142 * Math.pow(crk, a) * Math.pow(0.9938, edad);
 
             if (sexo === 'Femenino') tfg *= 1.012;
 
