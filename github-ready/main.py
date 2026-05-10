@@ -17,7 +17,9 @@ from pathlib import Path
 app = FastAPI(title="SISTEMA ERCA API")
 
 # ======================== CONFIG ========================
-DB_PATH = "sistema_erca.db"
+# Crear carpeta data si no existe
+os.makedirs("data", exist_ok=True)
+DB_PATH = os.path.join("data", "sistema_erca.db")
 
 # ======================== MODELOS ========================
 class Paciente(BaseModel):
