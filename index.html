@@ -1553,10 +1553,38 @@
                 if (response.ok) {
                     mostrarMensajeAtencion(`✅ Evaluación guardada - TFG: ${tfg} mL/min`, 'success');
 
+                    // Crear tarjeta visual del paciente
+                    agregarTarjetaPaciente({
+                        dni: pacienteActualEvaluacion.dni,
+                        nombre: pacienteActualEvaluacion.paciente,
+                        edad: pacienteActualEvaluacion.edad,
+                        crea,
+                        urea,
+                        hb,
+                        k,
+                        na,
+                        tfg,
+                        estadio: obtenerEstadio(tfg),
+                        asistencia,
+                        notas
+                    });
+
                     setTimeout(() => {
                         cerrarModal('modalEvaluacionAtencion');
                         removerPacienteDia(pacienteActualEvaluacion.dni);
                         pacienteActualEvaluacion = null;
+
+                        // Limpiar campos del formulario
+                        document.getElementById('atencFecha').value = '';
+                        document.getElementById('atencCrea').value = '';
+                        document.getElementById('atencUrea').value = '';
+                        document.getElementById('atencHb').value = '';
+                        document.getElementById('atencK').value = '';
+                        document.getElementById('atencNa').value = '';
+                        document.getElementById('atencACR').value = '';
+                        document.getElementById('atencSexo').value = '';
+                        document.getElementById('atencAsistencia').value = 'Puntual';
+                        document.getElementById('atencNotas').value = '';
                     }, 1500);
                 } else {
                     const errorData = await response.json();
@@ -1787,6 +1815,86 @@
             document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+        }
+
+        function agregarTarjetaPaciente(datos) {
+            // Determinar color según asistencia
+            let colorBorde = '#3a0ca3'; // azul por defecto
+            let estadoAsistencia = 'Registrado';
+
+            if (datos.asistencia === 'Puntual') {
+                colorBorde = '#00b894'; // verde
+                estadoAsistencia = '✅ Registrado (Puntual)';
+            } else if (datos.asistencia === 'Tardía') {
+                colorBorde = '#fdcb6e'; // amarillo
+                estadoAsistencia = '⚠️ Registrado (Tardío)';
+            } else if (datos.asistencia === 'Inasistencia') {
+                colorBorde = '#d63031'; // rojo
+                estadoAsistencia = '❌ No se presentó';
+            }
+
+            // Crear HTML de la tarjeta
+            const tarjeta = document.createElement('div');
+            tarjeta.id = `tarjeta-${datos.dni}`;
+            tarjeta.style.cssText = `
+                border-left: 5px solid ${colorBorde};
+                background: white;
+                padding: 16px;
+                margin-bottom: 16px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                border: 1px solid #e2e8f0;
+            `;
+
+            tarjeta.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                    <div>
+                        <h4 style="margin: 0 0 4px 0; color: #2d3748; font-size: 16px; font-weight: 600;">${datos.nombre}</h4>
+                        <p style="margin: 0; color: #718096; font-size: 13px;">DNI: ${datos.dni} | Edad: ${datos.edad} años</p>
+                        <p style="margin: 4px 0 0 0; color: #718096; font-size: 12px; font-weight: 500;">${estadoAsistencia}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 24px; font-weight: 700; color: #3a0ca3;">${datos.tfg}</div>
+                        <div style="font-size: 12px; color: #718096;">mL/min/1.73m²</div>
+                        <div style="font-size: 13px; color: #2d3748; margin-top: 4px; font-weight: 600;">${datos.estadio}</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px;">
+                    <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+                        <div style="font-size: 11px; color: #718096;">Creatinina</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #2d3748;">${datos.crea} mg/dL</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+                        <div style="font-size: 11px; color: #718096;">Urea</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #2d3748;">${datos.urea} mg/dL</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+                        <div style="font-size: 11px; color: #718096;">Hemoglobina</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #2d3748;">${datos.hb} g/dL</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+                        <div style="font-size: 11px; color: #718096;">Potasio</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #2d3748;">${datos.k} mEq/L</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+                        <div style="font-size: 11px; color: #718096;">Sodio</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #2d3748;">${datos.na} mEq/L</div>
+                    </div>
+                    <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+                        <div style="font-size: 11px; color: #718096;">Fecha</div>
+                        <div style="font-size: 14px; font-weight: 600; color: #2d3748;">${new Date().toLocaleDateString('es-ES')}</div>
+                    </div>
+                </div>
+
+                ${datos.notas ? `<div style="background: #eef2ff; padding: 8px; border-radius: 6px; border-left: 3px solid #3a0ca3; margin-top: 12px;">
+                    <div style="font-size: 11px; color: #718096; margin-bottom: 4px;">📝 Notas:</div>
+                    <div style="font-size: 13px; color: #2d3748;">${datos.notas}</div>
+                </div>` : ''}
+            `;
+
+            // Agregar tarjeta a la lista
+            document.getElementById('pacientesAtencionDiv').appendChild(tarjeta);
         }
 
         async function finalizarAtencionDelDia() {
