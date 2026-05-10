@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA ERCA - Aplicación Web Completa</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>SISTEMA ERCA - Gestor Clínico</title>
     <style>
         * {
             margin: 0;
@@ -14,28 +12,22 @@
         }
 
         :root {
-            --color-primary-dark: #3a0ca3;
-            --color-primary-medium: #3f37c9;
-            --color-primary-light: #4cc9f0;
-            --color-success: #00b894;
-            --color-warning: #fdcb6e;
-            --color-danger: #d63031;
-            --bg-light: #f8fafc;
-            --bg-card: #ffffff;
-            --bg-sidebar: linear-gradient(180deg, #1a1f3a 0%, #2d1b4e 100%);
-            --border-color: #e2e8f0;
-            --shadow-small: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-medium: 0 8px 24px rgba(0,0,0,0.12);
-            --shadow-large: 0 16px 48px rgba(0,0,0,0.16);
-            --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+            --primary: #3a0ca3;
+            --primary-light: #4cc9f0;
+            --success: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --sidebar: linear-gradient(180deg, #1a1f3a 0%, #2d1b4e 100%);
+            --text: #2d3748;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        html, body {
-            font-family: 'Inter', '-apple-system', 'Segoe UI', sans-serif;
-            background-color: var(--bg-light);
-            color: #2d3748;
-            height: 100%;
-            width: 100%;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
         }
 
         .container {
@@ -43,186 +35,175 @@
             min-height: 100vh;
         }
 
-        /* ====== SIDEBAR ====== */
         .sidebar {
-            width: 280px;
-            background: var(--bg-sidebar);
-            padding: 32px 24px;
+            width: 260px;
+            background: var(--sidebar);
+            color: white;
+            padding: 30px 20px;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
-            color: white;
-            z-index: 100;
         }
 
-        .sidebar-title {
-            font-family: 'Poppins', sans-serif;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 40px;
-            background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-medium));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .sidebar h1 {
+            font-size: 20px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
         .nav-item {
-            padding: 14px 20px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
+            transition: all 0.3s;
             font-size: 14px;
-            transition: all 200ms var(--ease-out);
-            user-select: none;
         }
 
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateX(4px);
-        }
+        .nav-item:hover { background: rgba(255,255,255,0.1); }
+        .nav-item.active { background: var(--primary); }
 
-        .nav-item.active {
-            background: var(--color-primary-dark);
-            border-color: var(--color-primary-medium);
-            box-shadow: 0 8px 20px rgba(58, 12, 163, 0.3);
-        }
-
-        /* ====== MAIN CONTENT ====== */
         .main {
+            margin-left: 260px;
             flex: 1;
-            margin-left: 280px;
-            padding: 40px;
-            overflow-y: auto;
-            max-height: 100vh;
+            padding: 30px;
         }
 
         .page {
             display: none;
-            animation: fadeInUp 400ms var(--ease-out);
         }
 
         .page.active {
             display: block;
         }
 
-        /* ====== BANNER ====== */
-        .banner {
-            background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary-medium) 50%, var(--color-primary-light) 100%);
-            border-radius: 24px;
-            padding: 40px;
-            color: white;
-            margin-bottom: 40px;
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
         }
 
-        .banner h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .banner p {
-            font-size: 16px;
-            opacity: 0.95;
-        }
-
-        /* ====== STATS GRID ====== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
         }
 
         .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: var(--shadow-small);
-            border: 1px solid var(--border-color);
-            transition: all 300ms var(--ease-out);
+            display: inline-block;
+            width: 23%;
+            margin-right: 2%;
+            padding: 20px;
+            background: var(--card);
+            border-radius: 12px;
+            border-top: 4px solid var(--primary);
+            box-shadow: var(--shadow);
+            text-align: center;
         }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-medium);
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary);
         }
 
         .stat-label {
             font-size: 12px;
-            font-weight: 600;
             color: #718096;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-top: 5px;
         }
 
-        .stat-value {
-            font-family: 'Poppins', sans-serif;
-            font-size: 40px;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* ====== CARD ====== */
-        .card {
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: var(--shadow-small);
-            border: 1px solid var(--border-color);
-            margin-bottom: 24px;
-        }
-
-        .card h3 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #2d3748;
-        }
-
-        /* ====== ACTION CARDS ====== */
-        .action-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 40px;
-        }
-
-        .action-card {
-            background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-medium));
-            border-radius: 20px;
-            padding: 24px;
-            color: white;
+        .patient-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-left: 4px solid var(--primary);
+            background: var(--card);
+            margin-bottom: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 300ms var(--ease-out);
-            border: none;
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .patient-card:hover {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+
+        .patient-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .patient-info h4 {
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .patient-info p {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #f7fafc;
+            padding: 12px;
+            text-align: left;
             font-weight: 600;
-            font-size: 16px;
-            user-select: none;
+            font-size: 12px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .action-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(58, 12, 163, 0.25);
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
         }
 
-        .action-card:active {
-            transform: scale(0.98);
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            margin-right: 10px;
         }
 
-        /* ====== MODAL ====== */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2d0880;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -230,11 +211,11 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
-            animation: fadeIn 300ms ease;
+            overflow-y: auto;
         }
 
         .modal.active {
@@ -242,343 +223,89 @@
         }
 
         .modal-content {
-            background: white;
-            border-radius: 24px;
-            padding: 32px;
-            max-width: 600px;
+            background: var(--card);
+            border-radius: 12px;
             width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: slideUp 300ms var(--ease-out);
-            position: relative;
+            max-width: 600px;
+            padding: 30px;
+            margin: 20px auto;
         }
 
-        .close-modal {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            width: 32px;
-            height: 32px;
-            background: var(--border-color);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transition: all 200ms ease;
-        }
-
-        .close-modal:hover {
-            background: #cbd5e1;
-        }
-
-        .modal-header {
-            margin-bottom: 24px;
-        }
-
-        .modal-header h2 {
-            font-family: 'Poppins', sans-serif;
+        .modal-close {
+            float: right;
             font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .modal-header p {
-            font-size: 14px;
+            cursor: pointer;
             color: #718096;
         }
 
-        .form-group {
+        .modal h3 {
             margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #2d3748;
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
             font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            transition: all 200ms ease;
+            font-family: inherit;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--color-primary-dark);
-            box-shadow: 0 0 0 3px rgba(58, 12, 163, 0.1);
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 32px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px 24px;
-            border-radius: 16px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 200ms ease-out;
-            font-family: 'Poppins', sans-serif;
-            font-size: 14px;
-            user-select: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary-medium));
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(58, 12, 163, 0.3);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        .btn-secondary {
-            background: var(--border-color);
-            color: #2d3748;
-        }
-
-        .btn-secondary:hover {
-            background: #cbd5e1;
-        }
-
-        /* ====== PATIENT CARDS ====== */
-        .patient-card {
-            border-left: 4px solid var(--color-warning);
-            background: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 200ms ease;
-            border: 1px solid var(--border-color);
-        }
-
-        .patient-card.attended {
-            border-left-color: var(--color-success);
-        }
-
-        .patient-card.absent {
-            border-left-color: var(--color-danger);
-        }
-
-        .patient-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
-        }
-
-        .patient-card-name {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .patient-card-info {
-            font-size: 12px;
+        .param-info {
+            font-size: 11px;
             color: #718096;
-            margin-top: 4px;
+            margin-top: 3px;
         }
 
-        /* ====== ANIMATIONS ====== */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .alert-card {
+            padding: 15px;
+            background: #fff5f5;
+            border-left: 4px solid var(--danger);
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(24px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ====== TABS ====== */
-        .tabs {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .tab-button {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 14px;
+        .loading {
+            text-align: center;
+            padding: 20px;
             color: #718096;
-            transition: all 200ms ease;
-        }
-
-        .tab-button.active {
-            color: var(--color-primary-dark);
-            border-bottom-color: var(--color-primary-dark);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* ====== CHART PLACEHOLDER ====== */
-        .chart-placeholder {
-            height: 300px;
-            background: linear-gradient(135deg, rgba(58, 12, 163, 0.05), rgba(76, 201, 240, 0.05));
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #a0aec0;
-            font-size: 14px;
-            border: 2px dashed var(--border-color);
-        }
-
-        /* ====== SEARCH BOX ====== */
-        .search-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 14px;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--color-primary-dark);
-            box-shadow: 0 0 0 3px rgba(58, 12, 163, 0.1);
-        }
-
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-top: none;
-            border-radius: 0 0 12px 12px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 10;
-        }
-
-        .search-results.active {
-            display: block;
-        }
-
-        .search-result-item {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: all 200ms ease;
-        }
-
-        .search-result-item:hover {
-            background: var(--bg-light);
         }
 
         .success-message {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            animation: fadeInUp 300ms ease;
+            background: #f0fff4;
+            border-left: 4px solid var(--success);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            color: var(--success);
         }
 
         .error-message {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            animation: fadeInUp 300ms ease;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(58, 12, 163, 0.2);
-            border-radius: 50%;
-            border-top-color: var(--color-primary-dark);
-            animation: spin 0.6s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ====== RESPONSIVE ====== */
-        @media (max-width: 1024px) {
-            .sidebar { width: 250px; }
-            .main { margin-left: 250px; padding: 24px; }
-            .stats-grid { grid-template-columns: 1fr; }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                padding: 16px;
-            }
-            .main {
-                margin-left: 0;
-                padding: 16px;
-            }
-            .banner { padding: 24px; }
-            .banner h1 { font-size: 24px; }
+            background: #fff5f5;
+            border-left: 4px solid var(--danger);
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            color: var(--danger);
         }
     </style>
 </head>
@@ -586,877 +313,403 @@
     <div class="container">
         <!-- SIDEBAR -->
         <div class="sidebar">
-            <div class="sidebar-title">🩸 ERCA</div>
-            <nav>
-                <div class="nav-item active" onclick="navegarA('panel')">Panel Principal</div>
-                <div class="nav-item" onclick="navegarA('registro')">Registro de Pacientes</div>
-                <div class="nav-item" onclick="navegarA('atencion')">Atención del Día</div>
-                <div class="nav-item" onclick="navegarA('alertas')">Alertas de Riesgo</div>
-                <div class="nav-item" onclick="navegarA('historial')">Historial Clínico</div>
-            </nav>
+            <h1>📋 ERCA</h1>
+            <div class="nav-item active" onclick="showPage('dashboard')">📊 Dashboard</div>
+            <div class="nav-item" onclick="showPage('pacientes')">👥 Pacientes</div>
+            <div class="nav-item" onclick="showPage('registro')">📝 Registro Diario</div>
+            <div class="nav-item" onclick="showPage('alertas')">⚠️ Alertas</div>
+            <hr style="margin: 20px 0; opacity: 0.2;">
+            <div class="nav-item" onclick="openModal('nuevoPaciente')">➕ Nuevo Paciente</div>
         </div>
 
         <!-- MAIN CONTENT -->
         <div class="main">
-
-            <!-- ====== PÁGINA 1: PANEL PRINCIPAL ====== -->
-            <div id="panel" class="page active">
-                <div class="banner">
-                    <h1>¡Bienvenido, Equipo ERCA!</h1>
-                    <p>Resumen Integral del Programa de Atención Renal</p>
-                </div>
-
-                <div class="stats-grid">
+            <!-- DASHBOARD -->
+            <div id="page-dashboard" class="page active">
+                <h2>Dashboard</h2>
+                <div style="margin-bottom: 20px;">
                     <div class="stat-card">
-                        <div class="stat-label">Pacientes Totales</div>
-                        <div class="stat-value" id="totalPacientes">0</div>
+                        <div class="stat-number" id="totalPacientes">-</div>
+                        <div class="stat-label">Total Pacientes</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Riesgo Crítico (TFG < 15)</div>
-                        <div class="stat-value" style="background: linear-gradient(135deg, #d63031, #e17055); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="riesgoCritico">0</div>
+                        <div class="stat-number" id="evaluacionesMes">-</div>
+                        <div class="stat-label">Evaluaciones (Mes)</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-label">Evaluaciones Este Mes</div>
-                        <div class="stat-value" style="background: linear-gradient(135deg, #00b894, #55efc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" id="evaluacionesMes">0</div>
+                        <div class="stat-number" id="alertasRiesgo">-</div>
+                        <div class="stat-label">En Riesgo</div>
                     </div>
                 </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;">
-                    <div class="card">
-                        <h3>Información del Sistema</h3>
-                        <div id="systemInfo" style="font-size: 14px; color: #718096;">
-                            <div class="loading-spinner"></div> Conectando a base de datos...
-                        </div>
-                    </div>
-                    <div class="card">
-                        <h3>Estado de la API</h3>
-                        <div id="statusAPI" style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 16px; border-radius: 12px; text-align: center;">
-                            <div class="loading-spinner" style="margin: 0 auto 8px;"></div>
-                            Verificando conexión...
-                        </div>
-                    </div>
-                </div>
-
-                <div class="action-cards">
-                    <button class="action-card" onclick="abrirModal('modalRegistro')">➕ Nueva Evaluación</button>
-                    <button class="action-card" onclick="abrirModal('modalRegistroPaciente')">👤 Registrar Paciente</button>
-                    <button class="action-card" onclick="navegarA('alertas')">🚨 Ver Alertas</button>
-                    <button class="action-card" onclick="navegarA('historial')">📊 Historial</button>
-                </div>
-            </div>
-
-            <!-- ====== PÁGINA 2: REGISTRO DE PACIENTES ====== -->
-            <div id="registro" class="page">
-                <div class="banner" style="margin-bottom: 30px;">
-                    <h1>Registro de Nuevos Pacientes</h1>
-                    <p>Completa los datos demográficos y clínicos del paciente</p>
-                </div>
-
-                <div class="card">
-                    <h3>Datos del Paciente</h3>
-                    <div id="msgRegistro"></div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="form-group">
-                            <label>DNI (8 dígitos)</label>
-                            <input type="text" id="regDNI" placeholder="Ej: 12345678" maxlength="8">
-                        </div>
-                        <div class="form-group">
-                            <label>Edad</label>
-                            <input type="number" id="regEdad" placeholder="Ej: 45" min="18" max="120">
-                        </div>
-                        <div class="form-group">
-                            <label>Nombre Completo</label>
-                            <input type="text" id="regNombre" placeholder="Ej: Juan Pérez García">
-                        </div>
-                        <div class="form-group">
-                            <label>Centro de Atención Primaria</label>
-                            <select id="regCAP">
-                                <option value="">Seleccionar CAP</option>
-                                <option value="CAP Los Olivos">CAP Los Olivos</option>
-                                <option value="CAP San Isidro">CAP San Isidro</option>
-                                <option value="CAP La Molina">CAP La Molina</option>
-                                <option value="CAP Miraflores">CAP Miraflores</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="margin-top: 20px;">
-                        <label>Estadio ERCA</label>
-                        <select id="regEstadio">
-                            <option value="">Seleccionar Estadio</option>
-                            <option value="G1">G1 - Normal (TFG ≥90)</option>
-                            <option value="G2">G2 - Leve (TFG 60-89)</option>
-                            <option value="G3a">G3a - Moderada (TFG 45-59)</option>
-                            <option value="G3b">G3b - Severa (TFG 30-44)</option>
-                            <option value="G4">G4 - Muy Severa (TFG 15-29)</option>
-                            <option value="G5">G5 - Falla Renal (TFG <15)</option>
-                        </select>
-                    </div>
-
-                    <div style="display: flex; gap: 12px; margin-top: 30px;">
-                        <button class="btn btn-primary" onclick="guardarPaciente()">✅ Guardar Paciente</button>
-                        <button class="btn btn-secondary" onclick="limpiarFormRegistro()">Limpiar</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ====== PÁGINA 3: ATENCIÓN DEL DÍA ====== -->
-            <div id="atencion" class="page">
-                <div class="banner" style="margin-bottom: 30px;">
-                    <h1>Atención del Día</h1>
-                    <p>Gestiona las atenciones de pacientes programados</p>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                    <!-- Panel Izquierdo: Agregar Pacientes -->
-                    <div class="card">
-                        <h3>Agregar Pacientes al Día</h3>
-                        <div class="search-box">
-                            <input type="text" id="searchPaciente" placeholder="Buscar por DNI o Nombre..." oninput="buscarPacienteAtencion()">
-                            <div class="search-results" id="resultsAtencion"></div>
-                        </div>
-                        <div id="pacientesSeleccionadosDiv" style="margin-top: 20px;">
-                            <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">Pacientes de hoy</h4>
-                            <div id="pacientesSeleccionados" style="max-height: 300px; overflow-y: auto;"></div>
-                        </div>
-                    </div>
-
-                    <!-- Panel Derecho: Fecha y Estadísticas -->
-                    <div class="card">
-                        <h3>Fecha de Atención</h3>
-                        <div class="form-group">
-                            <label>Seleccionar Fecha</label>
-                            <input type="date" id="fechaAtencion" value="">
-                        </div>
-                        <div style="background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(58, 12, 163, 0.1)); border-radius: 16px; padding: 16px; text-align: center;">
-                            <div style="font-family: 'Poppins'; font-size: 32px; font-weight: 700; color: var(--color-primary-dark);" id="countPacientesHoy">0</div>
-                            <div style="font-size: 12px; color: #718096; margin-top: 4px;">pacientes en agenda</div>
-                        </div>
-                        <div id="estadoAtencion" style="margin-top: 16px;"></div>
-                    </div>
-                </div>
-
-                <!-- Tarjetas de Pacientes -->
-                <div class="card" style="margin-top: 24px;">
-                    <h3>Pacientes en Atención</h3>
-                    <div id="pacientesAtencionDiv" style="max-height: 400px; overflow-y: auto;">
-                        <p style="color: #718096; font-size: 14px;">Selecciona pacientes del panel superior...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ====== PÁGINA 4: ALERTAS DE RIESGO ====== -->
-            <div id="alertas" class="page">
-                <div class="banner" style="margin-bottom: 30px;">
-                    <h1>🚨 Alertas de Riesgo</h1>
-                    <p>Pacientes que requieren intervención inmediata</p>
-                </div>
-
                 <div class="card">
                     <h3>Pacientes en Riesgo Crítico (TFG < 30)</h3>
-                    <div id="alertasDiv" style="max-height: 500px; overflow-y: auto;">
-                        <p style="color: #718096;"><div class="loading-spinner"></div> Cargando alertas...</p>
-                    </div>
+                    <div id="listaAlertas" class="loading">Cargando...</div>
                 </div>
             </div>
 
-            <!-- ====== PÁGINA 5: HISTORIAL CLÍNICO ====== -->
-            <div id="historial" class="page">
-                <div class="banner" style="margin-bottom: 30px;">
-                    <h1>📊 Historial Clínico</h1>
-                    <p>Consulta el histórico completo de pacientes</p>
-                </div>
+            <!-- PACIENTES -->
+            <div id="page-pacientes" class="page">
+                <h2>Gestor de Pacientes</h2>
+                <input type="text" id="buscarPaciente" placeholder="🔍 Buscar por DNI o nombre..." style="width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                <div id="listaPacientes" class="loading">Cargando pacientes...</div>
+            </div>
 
+            <!-- REGISTRO DIARIO -->
+            <div id="page-registro" class="page">
+                <h2>Registro Diario de Atención</h2>
                 <div class="card">
-                    <h3>Buscar Paciente</h3>
-                    <div class="search-box">
-                        <input type="text" id="searchHistorial" placeholder="Buscar por DNI o Nombre..." oninput="buscarPacienteHistorial()">
-                        <div class="search-results" id="resultsHistorial"></div>
-                    </div>
+                    <h3>Seleccionar Paciente para Evaluación</h3>
+                    <input type="text" id="buscarPacienteReg" placeholder="DNI o nombre del paciente..." style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                    <div id="resultadosReg" style="margin-top: 10px;"></div>
+                </div>
+                <div id="formEvalContainer" style="display: none;">
+                    <div class="card">
+                        <h3>Evaluación Clínica - <span id="pacienteEvalNombre"></span></h3>
+                        <div id="mensajeEval"></div>
 
-                    <div id="historialContentDiv" style="margin-top: 24px; display: none;">
-                        <div class="tabs">
-                            <button class="tab-button active" onclick="cambiarTab('lab')">📈 Evolución de Laboratorio</button>
-                            <button class="tab-button" onclick="cambiarTab('adherencia')">📊 Adherencia</button>
-                        </div>
-
-                        <div id="lab" class="tab-content active">
-                            <div id="tableHistorial" style="margin-top: 20px; overflow-x: auto;"></div>
-                        </div>
-
-                        <div id="adherencia" class="tab-content">
-                            <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 16px; border-radius: 12px; text-align: center;">
-                                Datos de adherencia cargados desde API
+                        <h4 style="margin-top: 20px; margin-bottom: 10px;">📊 Valores de Laboratorio</h4>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Creatinina (mg/dL)</label>
+                                <input type="number" id="crea" step="0.01" placeholder="0.6-1.2">
+                                <div class="param-info">Normal: 0.6 - 1.2 mg/dL</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Urea (mg/dL)</label>
+                                <input type="number" id="urea" step="0.1" placeholder="7-20">
+                                <div class="param-info">Normal: 7 - 20 mg/dL</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Hemoglobina (g/dL)</label>
+                                <input type="number" id="hb" step="0.1" placeholder="12-17.5">
+                                <div class="param-info">Normal: 12 - 17.5 g/dL</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Potasio (mEq/L)</label>
+                                <input type="number" id="k" step="0.1" placeholder="3.5-5.0">
+                                <div class="param-info">Normal: 3.5 - 5.0 mEq/L</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Sodio (mEq/L)</label>
+                                <input type="number" id="na" step="0.1" placeholder="136-145">
+                                <div class="param-info">Normal: 136 - 145 mEq/L</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Albúmina/Creatinina (mg/g)</label>
+                                <input type="number" id="acr" step="0.1" placeholder="0-30">
+                                <div class="param-info">Normal: 0 - 30 mg/g</div>
+                            </div>
+                            <div class="form-group">
+                                <label>TFG CKD-EPI (mL/min)</label>
+                                <input type="number" id="tfg" step="0.1" placeholder="≥90">
+                                <div class="param-info">Normal: ≥90 mL/min/1.73m²</div>
                             </div>
                         </div>
+
+                        <h4 style="margin-top: 20px; margin-bottom: 10px;">📋 Información Clínica</h4>
+                        <div class="form-group">
+                            <label>Estadio ERCA (calculado automáticamente)</label>
+                            <input type="text" id="estadioEval" readonly style="background: #f7fafc; cursor: not-allowed;">
+                        </div>
+                        <div class="form-group">
+                            <label>¿Paciente asistió?</label>
+                            <select id="asistio">
+                                <option>Sí</option>
+                                <option>No</option>
+                                <option>Reprogramada</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Notas Adicionales</label>
+                            <textarea id="notasEval" placeholder="Observaciones del paciente..." style="resize: vertical; height: 80px;"></textarea>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="guardarEvaluacion()">✓ Finalizar Atención del Paciente</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('formEvalContainer').style.display='none'; document.getElementById('resultadosReg').innerHTML='';">← Cancelar</button>
                     </div>
                 </div>
             </div>
+
+            <!-- ALERTAS -->
+            <div id="page-alertas" class="page">
+                <h2>Pacientes en Riesgo</h2>
+                <div id="alertasCompleto" class="loading">Cargando alertas...</div>
+            </div>
         </div>
     </div>
 
-    <!-- ====== MODALES ====== -->
-
-    <!-- Modal: Registro de Paciente (desde Panel) -->
-    <div class="modal" id="modalRegistroPaciente">
+    <!-- MODAL NUEVO PACIENTE -->
+    <div id="modalNuevoPaciente" class="modal">
         <div class="modal-content">
-            <button class="close-modal" onclick="cerrarModal('modalRegistroPaciente')">✕</button>
-            <div class="modal-header">
-                <h2>Registrar Nuevo Paciente</h2>
-                <p>Ingresa los datos demográficos y del estadio ERCA</p>
-            </div>
-
+            <span class="modal-close" onclick="closeModal('nuevoPaciente')">&times;</span>
+            <h3>Registrar Nuevo Paciente</h3>
             <div class="form-group">
-                <label>DNI (8 dígitos)</label>
-                <input type="text" id="modalDNI" placeholder="Ej: 12345678" maxlength="8">
+                <label>DNI</label>
+                <input type="text" id="formDNI" placeholder="Ej: 12345678">
             </div>
-
             <div class="form-group">
                 <label>Nombre Completo</label>
-                <input type="text" id="modalNombre" placeholder="Ej: Juan Pérez García">
+                <input type="text" id="formNombre" placeholder="Apellidos y Nombres">
             </div>
-
             <div class="form-group">
                 <label>Edad</label>
-                <input type="number" id="modalEdad" placeholder="Ej: 45" min="18" max="120">
+                <input type="number" id="formEdad" placeholder="Edad">
             </div>
-
-            <div class="form-group">
-                <label>Centro de Atención Primaria (CAP)</label>
-                <select id="modalCAP">
-                    <option value="">Seleccionar CAP</option>
-                    <option value="CAP Los Olivos">CAP Los Olivos</option>
-                    <option value="CAP San Isidro">CAP San Isidro</option>
-                    <option value="CAP La Molina">CAP La Molina</option>
-                </select>
-            </div>
-
             <div class="form-group">
                 <label>Estadio ERCA</label>
-                <select id="modalEstadio">
-                    <option value="">Seleccionar Estadio</option>
-                    <option value="G1">G1 - Normal (TFG ≥90)</option>
-                    <option value="G2">G2 - Leve (TFG 60-89)</option>
-                    <option value="G3a">G3a - Moderada (TFG 45-59)</option>
-                    <option value="G3b">G3b - Severa (TFG 30-44)</option>
-                    <option value="G4">G4 - Muy Severa (TFG 15-29)</option>
-                    <option value="G5">G5 - Falla Renal (TFG <15)</option>
+                <select id="formDx">
+                    <option>G1</option>
+                    <option>G2</option>
+                    <option>G3a</option>
+                    <option>G3b</option>
+                    <option>G4</option>
+                    <option>G5</option>
                 </select>
             </div>
-
-            <div class="modal-buttons">
-                <button class="btn btn-primary" onclick="modalGuardarPaciente()">Guardar Paciente</button>
-                <button class="btn btn-secondary" onclick="cerrarModal('modalRegistroPaciente')">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal: Nueva Evaluación -->
-    <div class="modal" id="modalRegistro">
-        <div class="modal-content">
-            <button class="close-modal" onclick="cerrarModal('modalRegistro')">✕</button>
-            <div class="modal-header">
-                <h2>Nueva Evaluación</h2>
-                <p>Registra los parámetros fisiológicos del paciente</p>
-            </div>
-
             <div class="form-group">
-                <label>Seleccionar Paciente</label>
-                <select id="modalPaciente">
-                    <option value="">Buscar paciente...</option>
-                </select>
+                <label>Centro de Atención (CAP)</label>
+                <input type="text" id="formCap" placeholder="Ej: CAP III MANTARO">
             </div>
-
-            <div class="form-group">
-                <label>Fecha de Evaluación</label>
-                <input type="date" id="modalFecha">
-            </div>
-
-            <h4 style="margin-top: 20px; margin-bottom: 12px; font-weight: 600;">Parámetros de Laboratorio</h4>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <div class="form-group">
-                    <label>Creatinina (mg/dL)</label>
-                    <input type="number" id="modalCrea" placeholder="1.2" step="0.1" min="0.1" max="15" oninput="calcularTFGEnTiempoReal()">
-                </div>
-                <div class="form-group">
-                    <label>Urea (mg/dL)</label>
-                    <input type="number" id="modalUrea" placeholder="45" step="1" min="1" max="300">
-                </div>
-                <div class="form-group">
-                    <label>Hemoglobina (g/dL)</label>
-                    <input type="number" id="modalHb" placeholder="12" step="0.1" min="1" max="20">
-                </div>
-                <div class="form-group">
-                    <label>Potasio (mEq/L)</label>
-                    <input type="number" id="modalK" placeholder="4.0" step="0.1" min="1" max="10">
-                </div>
-                <div class="form-group">
-                    <label>Sodio (mEq/L)</label>
-                    <input type="number" id="modalNa" placeholder="140" step="1" min="100" max="160">
-                </div>
-                <div class="form-group">
-                    <label>Albumina/Creatinina</label>
-                    <input type="number" id="modalACR" placeholder="30" step="1" min="0" max="500">
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 20px;">
-                <label>Sexo</label>
-                <select id="modalSexo" oninput="calcularTFGEnTiempoReal()">
-                    <option value="">Seleccionar</option>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Femenino">Femenino</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Estado de Asistencia</label>
-                <select id="modalAsistencia">
-                    <option value="Puntual">Puntual</option>
-                    <option value="Tardía">Tardía</option>
-                    <option value="Inasistencia">Inasistencia</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Observaciones Psiconefrológicas</label>
-                <textarea id="modalNotas" placeholder="Notas clínicas..." rows="4"></textarea>
-            </div>
-
-            <div id="tfgResult" style="background: linear-gradient(135deg, rgba(76, 201, 240, 0.1), rgba(58, 12, 163, 0.1)); border-radius: 12px; padding: 16px; margin-top: 20px; display: none;">
-                <p style="font-size: 12px; color: #718096; margin-bottom: 4px;">TFG Calculado (CKD-EPI)</p>
-                <p style="font-size: 24px; font-weight: 700; color: var(--color-primary-dark);" id="tfgValue">--</p>
-                <p style="font-size: 12px; color: #718096; margin-top: 4px;" id="tfgEstadio">--</p>
-            </div>
-
-            <div class="modal-buttons">
-                <button class="btn btn-primary" onclick="guardarEvaluacion()">✅ Finalizar Atención</button>
-                <button class="btn btn-secondary" onclick="cerrarModal('modalRegistro')">Cancelar</button>
-            </div>
+            <button class="btn btn-primary" onclick="guardarPaciente()">Registrar</button>
+            <button class="btn btn-secondary" onclick="closeModal('nuevoPaciente')">Cancelar</button>
         </div>
     </div>
 
     <script>
-        // ====== CONFIGURACIÓN API ======
-        const API_BASE = window.location.origin;
+        const API_BASE = '/api';
+        let pacienteEvalActual = null;
 
-        // ====== VARIABLES GLOBALES ======
-        let todosLosPacientes = [];
-        let pacientesDelDia = [];
-
-        // ====== UTILIDADES ======
-        function navegarA(pagina) {
+        function showPage(pageName) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pagina).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`page-${pageName}`).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             event.target.classList.add('active');
 
-            // Inicializar página
-            if (pagina === 'panel') cargarPanelPrincipal();
-            if (pagina === 'atencion') {
-                document.getElementById('fechaAtencion').valueAsDate = new Date();
-                actualizarPacientesAtencion();
-            }
-            if (pagina === 'alertas') cargarAlertas();
+            if (pageName === 'pacientes') cargarPacientes();
+            if (pageName === 'dashboard') cargarDashboard();
+            if (pageName === 'alertas') cargarAlertas();
         }
 
-        function abrirModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            if (modalId === 'modalRegistro') {
-                document.getElementById('modalFecha').valueAsDate = new Date();
-                cargarSelectPacientes();
-            }
+        function openModal(name) {
+            document.getElementById(`modal${name.charAt(0).toUpperCase() + name.slice(1)}`).classList.add('active');
         }
 
-        function cerrarModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-
-        // Cerrar con ESC
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-                document.body.style.overflow = 'auto';
-            }
-        });
-
-        // Cerrar modal al hacer click fuera
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                    document.body.style.overflow = 'auto';
-                }
-            });
-        });
-
-        // ====== FUNCIONES DE CÁLCULO CLÍNICO ======
-        function calcularTFG(creatinina, edad, sexo) {
-            const k = sexo === 'Femenino' ? 0.7 : 0.9;
-            const a = sexo === 'Femenino' ? -0.241 : -0.302;
-
-            const crk = creatinina / k;
-            let tfg = 142 * Math.pow(crk, a) * Math.pow(Math.max(crk, 1), -1.200) * Math.pow(0.9938, edad);
-
-            if (sexo === 'Femenino') tfg *= 1.012;
-
-            return Math.round(tfg * 10) / 10;
-        }
-
-        function obtenerEstadio(tfg) {
-            if (tfg >= 90) return 'G1 - Normal (TFG ≥90)';
-            if (tfg >= 60) return 'G2 - Leve (TFG 60-89)';
-            if (tfg >= 45) return 'G3a - Moderada (TFG 45-59)';
-            if (tfg >= 30) return 'G3b - Severa (TFG 30-44)';
-            if (tfg >= 15) return 'G4 - Muy Severa (TFG 15-29)';
-            return 'G5 - Falla Renal (TFG <15)';
-        }
-
-        // ====== API CALLS ======
-        async function verificarAPI() {
-            try {
-                const response = await fetch(`${API_BASE}/api/health`);
-                const data = await response.json();
-
-                if (response.ok) {
-                    document.getElementById('statusAPI').innerHTML =
-                        '<span style="color: #155724; font-weight: 600;">✅ Conectado</span><br><small style="color: #155724;">API funcionando correctamente</small>';
-                    return true;
-                }
-            } catch (error) {
-                document.getElementById('statusAPI').innerHTML =
-                    '<span style="color: #721c24; font-weight: 600;">⚠️ Error de Conexión</span><br><small style="color: #721c24;">Verifica que main.py esté ejecutando</small>';
-                return false;
-            }
+        function closeModal(name) {
+            document.getElementById(`modal${name.charAt(0).toUpperCase() + name.slice(1)}`).classList.remove('active');
         }
 
         async function cargarPacientes() {
             try {
-                const response = await fetch(`${API_BASE}/api/pacientes`);
-                if (response.ok) {
-                    todosLosPacientes = await response.json();
-                    return todosLosPacientes;
-                }
-            } catch (error) {
-                console.error('Error cargando pacientes:', error);
-                return [];
+                const res = await fetch(`${API_BASE}/pacientes`);
+                const pacientes = await res.json();
+                let html = '';
+                pacientes.forEach(p => {
+                    html += `<div class="patient-card" onclick="verPaciente('${p.dni}')">
+                        <div class="patient-avatar">${p.paciente.charAt(0)}</div>
+                        <div class="patient-info">
+                            <h4>${p.paciente}</h4>
+                            <p>DNI: ${p.dni} | Edad: ${p.edad} | ${p.dx}</p>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('listaPacientes').innerHTML = html;
+            } catch (e) {
+                document.getElementById('listaPacientes').innerHTML = '<div class="error-message">Error cargando pacientes</div>';
             }
         }
 
-        async function cargarEstadisticas() {
+        document.addEventListener('DOMContentLoaded', () => {
+            const buscarReg = document.getElementById('buscarPacienteReg');
+            if (buscarReg) {
+                buscarReg.addEventListener('input', async (e) => {
+                    if (e.target.value.length < 2) {
+                        document.getElementById('resultadosReg').innerHTML = '';
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch(`${API_BASE}/pacientes`);
+                        const pacientes = await res.json();
+                        const termino = e.target.value.toLowerCase();
+                        const filtrados = pacientes.filter(p =>
+                            p.dni.includes(termino) || p.paciente.toLowerCase().includes(termino)
+                        );
+
+                        let html = '';
+                        filtrados.forEach(p => {
+                            html += `<div class="patient-card" onclick="seleccionarPacienteEval('${p.dni}', '${p.paciente}')">
+                                <div class="patient-avatar">${p.paciente.charAt(0)}</div>
+                                <div class="patient-info">
+                                    <h4>${p.paciente}</h4>
+                                    <p>DNI: ${p.dni} | Edad: ${p.edad}</p>
+                                </div>
+                            </div>`;
+                        });
+                        document.getElementById('resultadosReg').innerHTML = html;
+                    } catch (e) {
+                        console.error(e);
+                    }
+                });
+            }
+        });
+
+        function seleccionarPacienteEval(dni, nombre) {
+            pacienteEvalActual = dni;
+            document.getElementById('pacienteEvalNombre').textContent = nombre;
+            document.getElementById('formEvalContainer').style.display = 'block';
+            document.getElementById('resultadosReg').innerHTML = '';
+            document.getElementById('buscarPacienteReg').value = '';
+            document.getElementById('mensajeEval').innerHTML = '';
+
+            document.getElementById('crea').value = '';
+            document.getElementById('urea').value = '';
+            document.getElementById('hb').value = '';
+            document.getElementById('k').value = '';
+            document.getElementById('na').value = '';
+            document.getElementById('acr').value = '';
+            document.getElementById('tfg').value = '';
+            document.getElementById('estadioEval').value = '';
+            document.getElementById('asistio').value = 'Sí';
+            document.getElementById('notasEval').value = '';
+        }
+
+        async function guardarEvaluacion() {
+            if (!pacienteEvalActual) {
+                alert('Error: Selecciona un paciente');
+                return;
+            }
+
+            const evaluacion = {
+                dni_p: pacienteEvalActual,
+                fecha: new Date().toISOString().split('T')[0],
+                crea: parseFloat(document.getElementById('crea').value) || 0,
+                urea: parseFloat(document.getElementById('urea').value) || 0,
+                hb: parseFloat(document.getElementById('hb').value) || 0,
+                k: parseFloat(document.getElementById('k').value) || 0,
+                na: parseFloat(document.getElementById('na').value) || 0,
+                acr: parseFloat(document.getElementById('acr').value) || 0,
+                tfg: parseFloat(document.getElementById('tfg').value) || 0,
+                estadio: determinarEstadio(parseFloat(document.getElementById('tfg').value) || 0),
+                asistio: document.getElementById('asistio').value,
+                notas: document.getElementById('notasEval').value
+            };
+
             try {
-                const response = await fetch(`${API_BASE}/api/estadisticas`);
-                if (response.ok) {
-                    return await response.json();
+                const res = await fetch(`${API_BASE}/evaluaciones`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(evaluacion)
+                });
+
+                if (res.ok) {
+                    document.getElementById('mensajeEval').innerHTML = '<div class="success-message">✓ Evaluación registrada correctamente</div>';
+                    setTimeout(() => {
+                        document.getElementById('formEvalContainer').style.display = 'none';
+                        pacienteEvalActual = null;
+                    }, 2000);
+                } else {
+                    const error = await res.text();
+                    document.getElementById('mensajeEval').innerHTML = `<div class="error-message">❌ Error: ${error}</div>`;
                 }
-            } catch (error) {
-                console.error('Error cargando estadísticas:', error);
-                return null;
+            } catch (e) {
+                document.getElementById('mensajeEval').innerHTML = `<div class="error-message">❌ Error: ${e.message}</div>`;
+            }
+        }
+
+        function determinarEstadio(tfg) {
+            if (tfg >= 90) return 'G1';
+            if (tfg >= 60) return 'G2';
+            if (tfg >= 45) return 'G3a';
+            if (tfg >= 30) return 'G3b';
+            if (tfg >= 15) return 'G4';
+            return 'G5';
+        }
+
+        async function cargarDashboard() {
+            try {
+                const stats = await fetch(`${API_BASE}/estadisticas`).then(r => r.json());
+                document.getElementById('totalPacientes').textContent = stats.total_pacientes || 0;
+                document.getElementById('evaluacionesMes').textContent = stats.evaluaciones_mes || 0;
+
+                const alertas = await fetch(`${API_BASE}/alertas`).then(r => r.json());
+                document.getElementById('alertasRiesgo').textContent = alertas.length || 0;
+
+                let html = '';
+                if (alertas.length === 0) {
+                    html = '<div class="success-message">✓ Sin pacientes en riesgo crítico</div>';
+                } else {
+                    alertas.forEach(a => {
+                        html += `<div class="alert-card">
+                            <strong>${a.paciente}</strong> (${a.dni})<br>
+                            TFG: <strong>${a.tfg_actual || 'N/A'}</strong> | Estadio: ${a.estadio_actual}
+                        </div>`;
+                    });
+                }
+                document.getElementById('listaAlertas').innerHTML = html;
+            } catch (e) {
+                console.error(e);
             }
         }
 
         async function cargarAlertas() {
             try {
-                const response = await fetch(`${API_BASE}/api/alertas`);
-                if (response.ok) {
-                    const alertas = await response.json();
-                    mostrarAlertas(alertas);
+                const alertas = await fetch(`${API_BASE}/alertas`).then(r => r.json());
+                let html = '';
+                if (alertas.length === 0) {
+                    html = '<div class="success-message">✓ Sin pacientes en riesgo crítico</div>';
+                } else {
+                    html += '<table><tr><th>Paciente</th><th>DNI</th><th>TFG Actual</th><th>Estadio</th></tr>';
+                    alertas.forEach(a => {
+                        html += `<tr><td>${a.paciente}</td><td>${a.dni}</td><td><strong>${a.tfg_actual}</strong></td><td>${a.estadio_actual}</td></tr>`;
+                    });
+                    html += '</table>';
                 }
-            } catch (error) {
-                document.getElementById('alertasDiv').innerHTML =
-                    '<p style="color: #718096;">⚠️ Error cargando alertas. Verifica la conexión.</p>';
+                document.getElementById('alertasCompleto').innerHTML = html;
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        function mostrarAlertas(alertas) {
-            const alertasDiv = document.getElementById('alertasDiv');
-
-            if (!alertas || alertas.length === 0) {
-                alertasDiv.innerHTML = '<p style="color: #155724; background: #d4edda; padding: 16px; border-radius: 12px;">✅ No hay pacientes en riesgo crítico</p>';
-                return;
-            }
-
-            alertasDiv.innerHTML = alertas.map(a => {
-                const color = a.tfg < 15 ? '#d63031' : '#fdcb6e';
-                const emoji = a.tfg < 15 ? '🔴' : '🟠';
-
-                return `<div class="patient-card" style="border-left-color: ${color}; margin-bottom: 12px;">
-                    <div class="patient-card-name">${emoji} ${a.paciente}</div>
-                    <div class="patient-card-info">DNI: ${a.dni} | ${a.dx}</div>
-                    <div style="margin-top: 8px;">
-                        <strong style="color: ${color};">TFG: ${a.tfg_actual || 'N/A'} mL/min</strong>
-                        <small style="color: #718096;"> | Estadio: ${a.estadio_actual || a.dx}</small>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        // ====== PANEL PRINCIPAL ======
-        async function cargarPanelPrincipal() {
-            await cargarPacientes();
-            const stats = await cargarEstadisticas();
-
-            document.getElementById('totalPacientes').textContent = todosLosPacientes.length;
-
-            if (stats) {
-                document.getElementById('evaluacionesMes').textContent = stats.evaluaciones_mes || 0;
-                document.getElementById('systemInfo').innerHTML =
-                    `<div style="font-size: 13px;">
-                        <p><strong>Pacientes:</strong> ${stats.total_pacientes}</p>
-                        <p><strong>Evaluaciones (Este mes):</strong> ${stats.evaluaciones_mes}</p>
-                        <p><strong>Estado:</strong> ✅ Sistema operativo</p>
-                    </div>`;
-            }
-
-            verificarAPI();
-        }
-
-        // ====== REGISTRO DE PACIENTES ======
         async function guardarPaciente() {
-            const dni = document.getElementById('regDNI').value;
-            const nombre = document.getElementById('regNombre').value;
-            const edad = document.getElementById('regEdad').value;
-            const cap = document.getElementById('regCAP').value;
-            const dx = document.getElementById('regEstadio').value;
-
-            if (!dni || !nombre || !edad || !cap || !dx) {
-                alert('Por favor completa todos los campos');
-                return;
-            }
-
-            if (dni.length !== 8) {
-                alert('El DNI debe tener 8 dígitos');
-                return;
-            }
+            const paciente = {
+                dni: document.getElementById('formDNI').value,
+                nombre: document.getElementById('formNombre').value,
+                edad: parseInt(document.getElementById('formEdad').value),
+                dx: document.getElementById('formDx').value,
+                cap: document.getElementById('formCap').value
+            };
 
             try {
-                const response = await fetch(`${API_BASE}/api/pacientes`, {
+                const res = await fetch(`${API_BASE}/pacientes`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        dni,
-                        nombre,
-                        edad: parseInt(edad),
-                        cap,
-                        dx
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(paciente)
                 });
 
-                if (response.ok) {
-                    showSuccess('msgRegistro', '✅ Paciente registrado exitosamente');
-                    limpiarFormRegistro();
-                    await cargarPacientes();
+                if (res.ok) {
+                    alert('✓ Paciente registrado correctamente');
+                    closeModal('nuevoPaciente');
                 } else {
-                    const error = await response.json();
-                    showError('msgRegistro', error.detail || 'Error al registrar paciente');
+                    alert('Error al registrar paciente');
                 }
-            } catch (error) {
-                showError('msgRegistro', 'Error de conexión. ¿Está ejecutando main.py?');
+            } catch (e) {
+                alert('Error: ' + e.message);
             }
         }
 
-        function showSuccess(elementId, message) {
-            const el = document.getElementById(elementId);
-            if (el) {
-                el.innerHTML = `<div class="success-message">${message}</div>`;
-                setTimeout(() => el.innerHTML = '', 3000);
+        cargarDashboard();
+        cargarPacientes();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
             }
-        }
+        });
 
-        function showError(elementId, message) {
-            const el = document.getElementById(elementId);
-            if (el) {
-                el.innerHTML = `<div class="error-message">${message}</div>`;
-                setTimeout(() => el.innerHTML = '', 3000);
-            }
-        }
-
-        function limpiarFormRegistro() {
-            document.getElementById('regDNI').value = '';
-            document.getElementById('regNombre').value = '';
-            document.getElementById('regEdad').value = '';
-            document.getElementById('regCAP').value = '';
-            document.getElementById('regEstadio').value = '';
-        }
-
-        async function modalGuardarPaciente() {
-            const dni = document.getElementById('modalDNI').value;
-            const nombre = document.getElementById('modalNombre').value;
-            const edad = document.getElementById('modalEdad').value;
-            const cap = document.getElementById('modalCAP').value;
-            const dx = document.getElementById('modalEstadio').value;
-
-            if (!dni || !nombre || !edad || !cap || !dx) {
-                alert('Por favor completa todos los campos');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE}/api/pacientes`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({dni, nombre, edad: parseInt(edad), cap, dx})
-                });
-
-                if (response.ok) {
-                    alert('✅ Paciente registrado exitosamente');
-                    document.getElementById('modalDNI').value = '';
-                    document.getElementById('modalNombre').value = '';
-                    document.getElementById('modalEdad').value = '';
-                    document.getElementById('modalCAP').value = '';
-                    document.getElementById('modalEstadio').value = '';
-                    cerrarModal('modalRegistroPaciente');
-                    await cargarPacientes();
-                } else {
-                    alert('Error: El DNI ya está registrado');
-                }
-            } catch (error) {
-                alert('Error de conexión');
-            }
-        }
-
-        // ====== ATENCIÓN DEL DÍA ======
-        function buscarPacienteAtencion() {
-            const search = document.getElementById('searchPaciente').value.toLowerCase();
-            const results = document.getElementById('resultsAtencion');
-
-            if (!search) {
-                results.classList.remove('active');
-                return;
-            }
-
-            const matches = todosLosPacientes.filter(p =>
-                p.dni.includes(search) || p.paciente.toLowerCase().includes(search)
-            );
-
-            results.innerHTML = matches.map(p =>
-                `<div class="search-result-item" onclick="agregarPacienteAlDia('${p.dni}', '${p.paciente}'); document.getElementById('searchPaciente').value = ''; document.getElementById('resultsAtencion').classList.remove('active');">
-                    <strong>${p.paciente}</strong><br>
-                    <small>${p.dni} - ${p.dx}</small>
-                </div>`
-            ).join('');
-
-            results.classList.add('active');
-        }
-
-        function agregarPacienteAlDia(dni, nombre) {
-            if (!pacientesDelDia.find(p => p.dni === dni)) {
-                const paciente = todosLosPacientes.find(p => p.dni === dni);
-                if (paciente) {
-                    pacientesDelDia.push(paciente);
-                    actualizarPacientesAtencion();
-                }
-            }
-        }
-
-        function actualizarPacientesAtencion() {
-            const container = document.getElementById('pacientesSeleccionados');
-            const atencionDiv = document.getElementById('pacientesAtencionDiv');
-
-            document.getElementById('countPacientesHoy').textContent = pacientesDelDia.length;
-
-            container.innerHTML = pacientesDelDia.map(p =>
-                `<div class="patient-card" style="cursor: default; margin-bottom: 10px;">
-                    <div class="patient-card-name">${p.paciente}</div>
-                    <div class="patient-card-info">DNI: ${p.dni} | ${p.dx}</div>
-                    <button class="btn btn-secondary" style="width: 100%; margin-top: 8px; padding: 8px;" onclick="removerPacienteDia('${p.dni}')">Remover</button>
-                </div>`
-            ).join('');
-
-            atencionDiv.innerHTML = pacientesDelDia.map(p =>
-                `<div class="patient-card pending" style="cursor: pointer;" onclick="abrirModalAtencion('${p.dni}')">
-                    <div class="patient-card-name">${p.paciente}</div>
-                    <div class="patient-card-info">DNI: ${p.dni} | Edad: ${p.edad} | ${p.dx}</div>
-                    <div style="margin-top: 8px; font-size: 12px; color: #718096;">→ Click para registrar parámetros</div>
-                </div>`
-            ).join('');
-
-            if (pacientesDelDia.length === 0) {
-                atencionDiv.innerHTML = '<p style="color: #718096; font-size: 14px;">Selecciona pacientes del panel superior...</p>';
-            }
-        }
-
-        function removerPacienteDia(dni) {
-            pacientesDelDia = pacientesDelDia.filter(p => p.dni !== dni);
-            actualizarPacientesAtencion();
-        }
-
-        function abrirModalAtencion(dni) {
-            const paciente = pacientesDelDia.find(p => p.dni === dni);
-            if (!paciente) return;
-
-            document.getElementById('modalPaciente').innerHTML =
-                `<option value="${paciente.dni}" selected>${paciente.paciente}</option>`;
-
-            abrirModal('modalRegistro');
-        }
-
-        // ====== EVALUACIONES ======
-        async function cargarSelectPacientes() {
-            await cargarPacientes();
-            const select = document.getElementById('modalPaciente');
-            select.innerHTML = '<option value="">Seleccionar paciente...</option>' +
-                todosLosPacientes.map(p => `<option value="${p.dni}">${p.paciente} (${p.dni})</option>`).join('');
-        }
-
-        function calcularTFGEnTiempoReal() {
-            const crea = parseFloat(document.getElementById('modalCrea').value);
-            const sexo = document.getElementById('modalSexo').value;
-            const pacienteDni = document.getElementById('modalPaciente').value;
-
-            if (crea && sexo && pacienteDni) {
-                const paciente = todosLosPacientes.find(p => p.dni === pacienteDni);
-                if (paciente) {
-                    const tfg = calcularTFG(crea, paciente.edad, sexo);
-                    const estadio = obtenerEstadio(tfg);
-
-                    document.getElementById('tfgResult').style.display = 'block';
-                    document.getElementById('tfgValue').textContent = tfg + ' mL/min/1.73m²';
-                    document.getElementById('tfgEstadio').textContent = estadio;
-                }
-            }
-        }
-
-        async function guardarEvaluacion() {
-            const pacienteDni = document.getElementById('modalPaciente').value;
-            const fecha = document.getElementById('modalFecha').value;
-            const crea = parseFloat(document.getElementById('modalCrea').value);
-            const urea = parseFloat(document.getElementById('modalUrea').value);
-            const hb = parseFloat(document.getElementById('modalHb').value);
-            const k = parseFloat(document.getElementById('modalK').value);
-            const na = parseFloat(document.getElementById('modalNa').value);
-            const acr = parseFloat(document.getElementById('modalACR').value) || 0;
-            const sexo = document.getElementById('modalSexo').value;
-            const asistencia = document.getElementById('modalAsistencia').value;
-            const notas = document.getElementById('modalNotas').value;
-
-            if (!pacienteDni || !fecha || !crea || !urea || !hb || !k || !na || !sexo) {
-                alert('Por favor completa todos los campos requeridos');
-                return;
-            }
-
-            const paciente = todosLosPacientes.find(p => p.dni === pacienteDni);
-            const tfg = calcularTFG(crea, paciente.edad, sexo);
-            const estadio = obtenerEstadio(tfg).split(' - ')[0];
-
-            try {
-                const response = await fetch(`${API_BASE}/api/evaluaciones`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        dni_p: pacienteDni,
-                        fecha,
-                        crea,
-                        urea,
-                        hb,
-                        k,
-                        na,
-                        acr,
-                        tfg,
-                        estadio,
-                        asistio: asistencia,
-                        notas
-                    })
-                });
-
-                if (response.ok) {
-                    alert('✅ Evaluación registrada - TFG: ' + tfg);
-                    cerrarModal('modalRegistro');
-                    removerPacienteDia(pacienteDni);
-                } else {
-                    alert('Error al registrar evaluación');
-                }
-            } catch (error) {
-                alert('Error de conexión');
-            }
-        }
-
-        // ====== HISTORIAL CLÍNICO ======
-        function buscarPacienteHistorial() {
-            const search = document.getElementById('searchHistorial').value.toLowerCase();
-            const results = document.getElementById('resultsHistorial');
-
-            if (!search) {
-                results.classList.remove('active');
-                return;
-            }
-
-            const matches = todosLosPacientes.filter(p =>
-                p.dni.includes(search) || p.paciente.toLowerCase().includes(search)
-            );
-
-            results.innerHTML = matches.map(p =>
-                `<div class="search-result-item" onclick="cargarHistorialPaciente('${p.dni}', '${p.paciente}'); document.getElementById('searchHistorial').value = ''; document.getElementById('resultsHistorial').classList.remove('active');">
-                    <strong>${p.paciente}</strong><br>
-                    <small>${p.dni} - ${p.dx}</small>
-                </div>`
-            ).join('');
-
-            results.classList.add('active');
-        }
-
-        async function cargarHistorialPaciente(dni, nombre) {
-            try {
-                const response = await fetch(`${API_BASE}/api/evaluaciones/${dni}`);
-                if (!response.ok) {
-                    alert('Este paciente no tiene evaluaciones registradas');
-                    return;
-                }
-
-                const evaluaciones = await response.json();
-
-                if (evaluaciones.length === 0) {
-                    alert('Este paciente no tiene evaluaciones registradas');
-                    return;
-                }
-
-                document.getElementById('historialContentDiv').style.display = 'block';
-
-                const tableDiv = document.getElementById('tableHistorial');
-                tableDiv.innerHTML = '<table style="width: 100%; border-collapse: collapse; font-size: 12px;">' +
-                    '<tr style="background: var(--bg-light);"><th style="padding: 8px; text-align: left; border: 1px solid var(--border-color);">Fecha</th>' +
-                    '<th style="padding: 8px; border: 1px solid var(--border-color);">Crea</th>' +
-                    '<th style="padding: 8px; border: 1px solid var(--border-color);">Urea</th>' +
-                    '<th style="padding: 8px; border: 1px solid var(--border-color);">Hb</th>' +
-                    '<th style="padding: 8px; border: 1px solid var(--border-color);">K</th>' +
-                    '<th style="padding: 8px; border: 1px solid var(--border-color);">Na</th>' +
-                    '<th style="padding: 8px; border: 1px solid var(--border-color);">TFG</th>' +
-                    '<th style="padding: 8px; border: 1px solid var(--border-color);">Estadio</th></tr>' +
-                    evaluaciones.map(e =>
-                        `<tr><td style="padding: 8px; border: 1px solid var(--border-color);">${e.fecha}</td>
-                        <td style="padding: 8px; border: 1px solid var(--border-color); text-align: center;">${e.crea}</td>
-                        <td style="padding: 8px; border: 1px solid var(--border-color); text-align: center;">${e.urea}</td>
-                        <td style="padding: 8px; border: 1px solid var(--border-color); text-align: center;">${e.hb}</td>
-                        <td style="padding: 8px; border: 1px solid var(--border-color); text-align: center;">${e.k}</td>
-                        <td style="padding: 8px; border: 1px solid var(--border-color); text-align: center;">${e.na}</td>
-                        <td style="padding: 8px; border: 1px solid var(--border-color); text-align: center;"><strong>${e.tfg}</strong></td>
-                        <td style="padding: 8px; border: 1px solid var(--border-color); text-align: center;">${e.estadio}</td></tr>`
-                    ).join('') +
-                    '</table>';
-            } catch (error) {
-                alert('Error cargando historial');
-            }
-        }
-
-        function cambiarTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // ====== INICIALIZACIÓN ======
-        document.addEventListener('DOMContentLoaded', async () => {
-            const hoy = new Date().toISOString().split('T')[0];
-            document.getElementById('fechaAtencion').value = hoy;
-            document.getElementById('modalFecha').value = hoy;
-
-            // Cargar datos iniciales
-            await cargarPacientes();
-            await cargarPanelPrincipal();
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.remove('active');
+            });
         });
     </script>
 </body>

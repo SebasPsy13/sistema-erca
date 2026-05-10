@@ -17,6 +17,7 @@ from pathlib import Path
 app = FastAPI(title="SISTEMA ERCA API")
 
 # ======================== CONFIG ========================
+# Ruta a la base de datos existente en la raíz
 DB_PATH = "sistema_erca.db"
 
 # ======================== MODELOS ========================
@@ -46,6 +47,17 @@ class Cita(BaseModel):
     fecha_cita: str
     tipo: str
     estado: str
+
+# ======================== PARÁMETROS DE LABORATORIO ========================
+PARAMETROS_LABORATORIO = {
+    "crea": {"nombre": "Creatinina", "unidad": "mg/dL", "min": 0.6, "max": 1.2},
+    "urea": {"nombre": "Urea", "unidad": "mg/dL", "min": 7, "max": 20},
+    "hb": {"nombre": "Hemoglobina", "unidad": "g/dL", "min": 12, "max": 17.5},
+    "k": {"nombre": "Potasio", "unidad": "mEq/L", "min": 3.5, "max": 5.0},
+    "na": {"nombre": "Sodio", "unidad": "mEq/L", "min": 136, "max": 145},
+    "acr": {"nombre": "Albúmina/Creatinina", "unidad": "mg/g", "min": 0, "max": 30},
+    "tfg": {"nombre": "TFG (CKD-EPI)", "unidad": "mL/min/1.73m2", "min": 90, "max": 999}
+}
 
 # ======================== DATABASE MANAGER ========================
 class DatabaseManager:
@@ -315,11 +327,46 @@ def serve_html():
     """Servir el archivo HTML"""
     return FileResponse("index.html", media_type="text/html")
 
+# ======================== RUTAS API - PARÁMETROS ========================
+@app.get("/api/parametros")
+def get_parametros():
+    """Obtener parámetros de laboratorio con valores normales"""
+    return PARAMETROS_LABORATORIO
+
+# ======================== RUTAS API - DEBUG ========================
+@app.get("/api/debug")
+def debug_info():
+    """Información de diagnóstico"""
+    conn = DatabaseManager.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM pacientes")
+    pacientes_count = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM seguimiento")
+    evaluaciones_count = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM agenda")
+    citas_count = cursor.fetchone()[0]
+
+    conn.close()
+
+    return {
+        "status": "ok",
+        "db_path": DB_PATH,
+        "db_exists": os.path.exists(DB_PATH),
+        "db_size_kb": os.path.getsize(DB_PATH) / 1024 if os.path.exists(DB_PATH) else 0,
+        "pacientes": pacientes_count,
+        "evaluaciones": evaluaciones_count,
+        "citas": citas_count,
+        "api_version": "2.1"
+    }
+
 # ======================== HEALTH CHECK ========================
 @app.get("/api/health")
 def health_check():
     """Verificar que la API está funcionando"""
-    return {"status": "ok", "message": "SISTEMA ERCA API v2.0"}
+    return {"status": "ok", "message": "SISTEMA ERCA API v2.1 - OK"}
 
 # ======================== INSTRUCCIONES ========================
 if __name__ == "__main__":
