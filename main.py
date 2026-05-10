@@ -211,11 +211,12 @@ def crear_evaluacion(eval_data: Evaluacion):
     cursor = conn.cursor()
 
     try:
+        # Usar 'ac' porque la BD existente usa ese nombre de columna
         cursor.execute('''
             INSERT INTO seguimiento
-            (dni_p, fecha, urea, crea, hb, k, na, ac, tfg, estadio, asistio, notas)
+            (dni_p, fecha, crea, urea, hb, k, na, ac, tfg, estadio, asistio, notas)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (eval_data.dni_p, eval_data.fecha, eval_data.urea, eval_data.crea,
+        ''', (eval_data.dni_p, eval_data.fecha, eval_data.crea, eval_data.urea,
               eval_data.hb, eval_data.k, eval_data.na, eval_data.acr,
               eval_data.tfg, eval_data.estadio, eval_data.asistio, eval_data.notas))
         conn.commit()
