@@ -23,6 +23,7 @@ wheels/
 *.egg
 .DS_Store
 *.db
+!sistema_erca.db
 .env
 .vscode/
 .idea/
