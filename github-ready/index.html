@@ -325,6 +325,7 @@
             <div class="nav-item" onclick="showPage('registro')">📝 Registro Diario</div>
             <div class="nav-item" onclick="showPage('alertas')">⚠️ Alertas</div>
             <hr style="margin: 20px 0; opacity: 0.2;">
+            <div class="nav-item" onclick="showPage('diagnostico')">🔧 Diagnóstico</div>
             <div class="nav-item" onclick="openModal('nuevoPaciente')">➕ Nuevo Paciente</div>
         </div>
 
@@ -441,6 +442,17 @@
                 <h2>Pacientes en Riesgo</h2>
                 <div id="alertasCompleto" class="loading">Cargando alertas...</div>
             </div>
+
+            <!-- DIAGNÓSTICO -->
+            <div id="page-diagnostico" class="page">
+                <h2>🔧 Panel de Diagnóstico</h2>
+                <div class="card">
+                    <h3>Estado del Sistema</h3>
+                    <button class="btn btn-primary" onclick="ejecutarDiagnostico()">Ejecutar Diagnóstico Completo</button>
+                    <button class="btn btn-secondary" onclick="limpiarConsola()">Limpiar Consola</button>
+                    <div id="diagnosticoResultado" style="margin-top: 20px; background: #f7fafc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 500px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -485,9 +497,95 @@
         const API_BASE = '/api';
         let pacienteEvalActual = null;
         let parametros = {};
+        let diagnosticoLogs = [];
+
+        function agregarLog(mensaje, tipo = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const log = `[${timestamp}] [${tipo.toUpperCase()}] ${mensaje}`;
+            diagnosticoLogs.push(log);
+            console.log(log);
+            actualizarConsola();
+        }
+
+        function actualizarConsola() {
+            const consola = document.getElementById('diagnosticoResultado');
+            if (consola) {
+                consola.textContent = diagnosticoLogs.join('\n');
+                consola.scrollTop = consola.scrollHeight;
+            }
+        }
+
+        function limpiarConsola() {
+            diagnosticoLogs = [];
+            actualizarConsola();
+        }
+
+        async function ejecutarDiagnostico() {
+            diagnosticoLogs = [];
+            agregarLog('🔍 Iniciando diagnóstico completo...');
+
+            try {
+                // 1. Health Check
+                agregarLog('1️⃣ Verificando API health...');
+                let res = await fetch(`${API_BASE}/health`);
+                let data = await res.json();
+                agregarLog(`✓ Health: ${JSON.stringify(data)}`, 'success');
+
+                // 2. Debug Info
+                agregarLog('2️⃣ Obteniendo info de BD...');
+                res = await fetch(`${API_BASE}/debug`);
+                data = await res.json();
+                agregarLog(`✓ BD Status: ${JSON.stringify(data, null, 2)}`, 'success');
+
+                // 3. Cargar Parámetros
+                agregarLog('3️⃣ Cargando parámetros...');
+                res = await fetch(`${API_BASE}/parametros`);
+                data = await res.json();
+                agregarLog(`✓ Parámetros: ${Object.keys(data).length} definidos`, 'success');
+
+                // 4. Cargar Pacientes
+                agregarLog('4️⃣ Cargando pacientes...');
+                res = await fetch(`${API_BASE}/pacientes`);
+                if (!res.ok) {
+                    agregarLog(`✗ Error HTTP ${res.status}: ${res.statusText}`, 'error');
+                } else {
+                    data = await res.json();
+                    agregarLog(`✓ Pacientes: ${data.length} encontrados`, 'success');
+                    if (data.length > 0) {
+                        agregarLog(`  Primer paciente: ${data[0].paciente} (${data[0].dni})`);
+                    }
+                }
+
+                // 5. Cargar Estadísticas
+                agregarLog('5️⃣ Cargando estadísticas...');
+                res = await fetch(`${API_BASE}/estadisticas`);
+                data = await res.json();
+                agregarLog(`✓ Stats: Total=${data.total_pacientes}, Evals=${data.evaluaciones_mes}`, 'success');
+
+                // 6. Cargar Alertas
+                agregarLog('6️⃣ Cargando alertas...');
+                res = await fetch(`${API_BASE}/alertas`);
+                data = await res.json();
+                agregarLog(`✓ Alertas: ${data.length} pacientes en riesgo`, 'success');
+
+                agregarLog('✅ Diagnóstico completado exitosamente', 'success');
+            } catch (e) {
+                agregarLog(`❌ Error: ${e.message}`, 'error');
+                agregarLog(`Stack: ${e.stack}`, 'error');
+            }
+        }
 
         // CARGAR PARÁMETROS AL INICIO
-        fetch(`${API_BASE}/parametros`).then(r => r.json()).then(p => { parametros = p; });
+        fetch(`${API_BASE}/parametros`)
+            .then(r => {
+                agregarLog(`Parámetros cargados (status ${r.status})`);
+                return r.json();
+            })
+            .then(p => {
+                parametros = p;
+                agregarLog(`✓ ${Object.keys(p).length} parámetros disponibles`);
+            })
+            .catch(e => agregarLog(`Error cargando parámetros: ${e.message}`, 'error'));
 
         function showPage(pageName) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

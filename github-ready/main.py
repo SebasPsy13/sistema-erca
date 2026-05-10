@@ -333,11 +333,40 @@ def get_parametros():
     """Obtener parámetros de laboratorio con valores normales"""
     return PARAMETROS_LABORATORIO
 
+# ======================== RUTAS API - DEBUG ========================
+@app.get("/api/debug")
+def debug_info():
+    """Información de diagnóstico"""
+    conn = DatabaseManager.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM pacientes")
+    pacientes_count = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM seguimiento")
+    evaluaciones_count = cursor.fetchone()[0]
+
+    cursor.execute("SELECT COUNT(*) FROM agenda")
+    citas_count = cursor.fetchone()[0]
+
+    conn.close()
+
+    return {
+        "status": "ok",
+        "db_path": DB_PATH,
+        "db_exists": os.path.exists(DB_PATH),
+        "db_size_kb": os.path.getsize(DB_PATH) / 1024 if os.path.exists(DB_PATH) else 0,
+        "pacientes": pacientes_count,
+        "evaluaciones": evaluaciones_count,
+        "citas": citas_count,
+        "api_version": "2.1"
+    }
+
 # ======================== HEALTH CHECK ========================
 @app.get("/api/health")
 def health_check():
     """Verificar que la API está funcionando"""
-    return {"status": "ok", "message": "SISTEMA ERCA API v2.0"}
+    return {"status": "ok", "message": "SISTEMA ERCA API v2.1 - OK"}
 
 # ======================== INSTRUCCIONES ========================
 if __name__ == "__main__":
